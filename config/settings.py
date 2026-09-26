@@ -15,7 +15,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "django.contrib.messages",  
+    "django.contrib.messages",
     "django.contrib.staticfiles",
     "app",
 ]
@@ -92,6 +92,36 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# ---------------------------------------------------------------------
+# Armazenamento das imagens (uploads) no Supabase Storage
+# Com USE_SUPABASE_STORAGE=True no .env, os uploads vão para o bucket
+# do Supabase. Com False (ou sem a variável), usa a pasta media local.
+# ---------------------------------------------------------------------
+if os.environ.get("USE_SUPABASE_STORAGE") == "True":
+    SUPABASE_PROJECT_REF = os.environ.get("SUPABASE_PROJECT_REF")
+    SUPABASE_BUCKET = os.environ.get("SUPABASE_BUCKET")
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "app.storage.SupabaseStorage",
+            "OPTIONS": {
+                "bucket_name": SUPABASE_BUCKET,
+                "access_key": os.environ.get("SUPABASE_S3_ACCESS_KEY_ID"),
+                "secret_key": os.environ.get("SUPABASE_S3_SECRET_ACCESS_KEY"),
+                "endpoint_url": os.environ.get("SUPABASE_S3_ENDPOINT"),
+                "region_name": os.environ.get("SUPABASE_S3_REGION"),
+                "addressing_style": "path",
+                "default_acl": None,
+                "querystring_auth": False,
+                "file_overwrite": False,
+                "custom_domain": f"{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/object/public/{SUPABASE_BUCKET}",
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 
 LOGIN_URL = "login"
 
