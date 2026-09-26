@@ -3,3 +3,9 @@ __pycache__/
 *.pyc
 .venv/
 dados.json
+DB_NAME=Inova
+DB_USER=postgres
+DB_PASSWORD="In0va#Sudoeste2026!"
+DB_HOST=localhost
+DB_PORT=5432
+DB_SSLMODE=prefer
