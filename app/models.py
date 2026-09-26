@@ -41,6 +41,9 @@ class Ator(models.Model):
         Municipio, on_delete=models.PROTECT, verbose_name="Município do ator"
     )
     descricao = models.TextField(blank=True, verbose_name="Descrição do ator")
+    logo = models.ImageField(
+        upload_to="atores/logos/", blank=True, null=True, verbose_name="Logo do ator"
+    )
     site = models.CharField(max_length=200, blank=True, verbose_name="Site do ator")
     contato_email = models.CharField(
         max_length=100, blank=True, verbose_name="Email de contato"
@@ -86,6 +89,15 @@ class Startup(models.Model):
         default="ideacao",
         verbose_name="Estágio da startup",
     )
+    estagio = models.CharField(
+        max_length=20,
+        choices=ESTAGIO_CHOICES,
+        default="ideacao",
+        verbose_name="Estágio da startup",
+    )
+    logo = models.ImageField(
+        upload_to="startups/logos/", blank=True, null=True, verbose_name="Logo da startup"
+    )
     data_fundacao = models.DateField(
         blank=True, null=True, verbose_name="Data de fundação"
     )
@@ -120,6 +132,9 @@ class Projeto(models.Model):
         default="planejado",
         verbose_name="Status do projeto",
     )
+    imagem = models.ImageField(
+        upload_to="projetos/", blank=True, null=True, verbose_name="Imagem do projeto"
+    )
     data_inicio = models.DateField(blank=True, null=True, verbose_name="Data de início")
     data_fim = models.DateField(blank=True, null=True, verbose_name="Data de fim")
     instituicoes = models.ManyToManyField(
@@ -148,8 +163,22 @@ class Evento(models.Model):
         ("hibrido", "Híbrido"),
     ]
 
+    TIPO_EVENTO_CHOICES = [
+        ("presencial", "Presencial"),
+        ("online", "Online"),
+        ("workshop", "Workshop"),
+        ("palestra", "Palestra"),
+        ("feira", "Feira"),
+    ]
+
     titulo = models.CharField(max_length=200, verbose_name="Título do evento")
     descricao = models.TextField(blank=True, verbose_name="Descrição do evento")
+    tipo_evento = models.CharField(
+        max_length=20,
+        choices=TIPO_EVENTO_CHOICES,
+        default="presencial",
+        verbose_name="Tipo de evento",
+    )
     data_inicio = models.DateTimeField(verbose_name="Data/hora de início")
     data_fim = models.DateTimeField(
         blank=True, null=True, verbose_name="Data/hora de fim"
@@ -188,9 +217,22 @@ class Evento(models.Model):
 
 
 class Especialista(models.Model):
+    TIPO_APOIO_CHOICES = [
+        ("mentoria", "Mentoria"),
+        ("consultoria", "Consultoria"),
+        ("palestra", "Palestra/Capacitação"),
+        ("networking", "Networking/Conexões"),
+    ]
+
     nome = models.CharField(max_length=200, verbose_name="Nome do especialista")
     area_atuacao = models.CharField(
         max_length=150, blank=True, verbose_name="Área de atuação"
+    )
+    tipo_apoio = models.CharField(
+        max_length=20,
+        choices=TIPO_APOIO_CHOICES,
+        blank=True,
+        verbose_name="Tipo de apoio",
     )
     bio = models.TextField(blank=True, verbose_name="Biografia")
     foto = models.ImageField(
@@ -206,19 +248,41 @@ class Especialista(models.Model):
         null=True,
         verbose_name="Instituição vinculada",
     )
+    destaque = models.BooleanField(default=False, verbose_name="Em destaque")
     ativo = models.BooleanField(default=True, verbose_name="Status do especialista")
     criado_em = models.DateTimeField(auto_now_add=True, verbose_name="Data de criação")
 
     def __str__(self):
         return self.nome
 
+    @property
+    def areas_lista(self):
+        """Quebra o campo area_atuacao (separado por vírgula) em uma lista de tags."""
+        if not self.area_atuacao:
+            return []
+        return [area.strip() for area in self.area_atuacao.split(',') if area.strip()]
+
     class Meta:
         verbose_name = "Especialista"
         verbose_name_plural = "Especialistas"
+        ordering = ['-destaque', 'nome']
 
 
 class CasoSucesso(models.Model):
+    CATEGORIA_CHOICES = [
+        ("startup", "Startup"),
+        ("instituicao", "Instituição"),
+        ("investimento", "Investimento"),
+        ("parceria", "Parceria"),
+    ]
+
     titulo = models.CharField(max_length=200, verbose_name="Título do caso de sucesso")
+    categoria = models.CharField(
+        max_length=20,
+        choices=CATEGORIA_CHOICES,
+        default="startup",
+        verbose_name="Categoria",
+    )
     resumo = models.CharField(max_length=300, blank=True, verbose_name="Resumo")
     conteudo = models.TextField(blank=True, verbose_name="Conteúdo")
     imagem = models.ImageField(
@@ -272,3 +336,20 @@ class Reuniao(models.Model):
         verbose_name = "Reunião"
         verbose_name_plural = "Reuniões"
         ordering = ["data_hora"]
+        
+        
+class Membro(models.Model):
+    nome = models.CharField(max_length=200, verbose_name="Nome do membro")
+    foto = models.ImageField(upload_to="membros/fotos/", blank=True, null=True, verbose_name="Foto")
+    grupo = models.CharField(max_length=200, blank=True, verbose_name="Grupo(s)/Eixo(s)")
+    descricao = models.CharField(max_length=300, blank=True, verbose_name="Descrição (cargo, instituição, cidade)")
+    ativo = models.BooleanField(default=True, verbose_name="Status do membro")
+    criado_em = models.DateTimeField(auto_now_add=True, verbose_name="Data de criação")
+
+    def __str__(self):
+        return self.nome
+
+    class Meta:
+        verbose_name = "Membro"
+        verbose_name_plural = "Membros"
+        ordering = ["nome"]

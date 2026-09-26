@@ -1,0 +1,185 @@
+{% load static %}
+{% load calendar_tags %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda de Eventos - INova Sudoeste de Minas</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,900;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header id="header">
+        <nav>
+            <div class="logo-container">
+                <img src="{% static 'imagens/inova_simbologia.png' %}" alt="Logo Inova Sudoeste de Minas" class="header-logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/#sobre">Sobre</a></li>
+                <li><a href="/#ecossistema">Ecossistema</a></li>
+                <li><a href="/#parceiros">Parceiros</a></li>
+                <li><a href="/#startups">Startups</a></li>
+                <li><a href="/#indicadores">Indicadores</a></li>
+                <li><a href="/#membros">Membros</a></li>
+                <li><a href="/#recursos">Recursos</a></li>
+                <li><a href="/login/" class="btn-area-membros">Área de Membros</a></li>
+            </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="resource-page">
+        <div class="container">
+
+            <div class="casos-hero">
+                <div class="casos-hero-text">
+                    <h1>Agenda de Eventos</h1>
+                    <span class="casos-hero-underline"></span>
+                    <p class="section-intro" style="margin: 1.2rem 0 0; text-align: left;">Fique por dentro de todas as datas importantes para o ecossistema de inovação na região sudoeste de Minas Gerais.</p>
+                </div>
+                <div class="casos-hero-img">
+                    <img src="{% static 'imagens/calendario_agenda_ecossistema.jpeg' %}" alt="Ilustração de agenda">
+                </div>
+            </div>
+
+            <div class="casos-filtros-box">
+                <div class="casos-tabs">
+                    <button class="casos-tab active" data-tipo="">
+                        <i class="fas fa-th-large"></i> Todos
+                    </button>
+                    {% for valor, label in tipo_evento_choices %}
+                        <button class="casos-tab" data-tipo="{{ valor }}">
+                            <i class="fas fa-calendar-day"></i> {{ label }}s
+                        </button>
+                    {% endfor %}
+                </div>
+                <div class="casos-busca">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="evento-search" placeholder="Buscar eventos...">
+                </div>
+            </div>
+
+            <div class="casos-grid" id="eventos-grid">
+                {% for evento in eventos %}
+                    <div class="caso-card{% if forloop.counter > 3 %} caso-oculto{% endif %}"
+                         data-tipo="{{ evento.tipo_evento }}"
+                         data-titulo="{{ evento.titulo|lower }}">
+                        {% if evento.imagem_capa %}
+                            <div class="caso-img">
+                                <img src="{{ evento.imagem_capa.url }}" alt="{{ evento.titulo }}">
+                            </div>
+                        {% endif %}
+                        <div class="caso-conteudo">
+                            <span class="caso-badge caso-badge-{{ evento.tipo_evento }}">{{ evento.get_tipo_evento_display }}</span>
+                            <h3>{{ evento.titulo }}</h3>
+                            <div class="caso-meta">
+                                <span><i class="fas fa-calendar"></i> {{ evento.data_inicio|date:"d/m/Y H:i" }}</span>
+                                {% if evento.local %}
+                                    <span><i class="fas fa-map-marker-alt"></i> {{ evento.local }}{% if evento.municipio %} - {{ evento.municipio }}{% endif %}</span>
+                                {% endif %}
+                            </div>
+                            {% if evento.descricao %}
+                                <p>{{ evento.descricao|truncatewords:20 }}</p>
+                            {% endif %}
+                            <div class="caso-meta" style="margin-bottom: 0.9rem;">
+                                <a href="{% google_calendar_link evento.titulo evento.data_inicio local=evento.local descricao=evento.descricao %}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-orange); text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                                    <i class="fab fa-google"></i> Google Calendar
+                                </a>
+                                <a href="/eventos/{{ evento.id }}/calendario/" style="color: var(--primary-orange); text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-download"></i> .ics
+                                </a>
+                            </div>
+                            {% if evento.link_inscricao %}
+                                <a href="{{ evento.link_inscricao }}" target="_blank" rel="noopener noreferrer" class="ver-todas-btn" style="background-color: var(--primary-orange); color: white;">Saiba mais <i class="fas fa-arrow-right"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="loading-message">Nenhum evento cadastrado no momento.</p>
+                {% endfor %}
+            </div>
+            <p id="eventos-sem-resultado" style="display:none; text-align:center; color:#888; margin-top:2rem;">Nenhum evento encontrado com esse filtro.</p>
+
+            <div class="casos-ver-mais-wrap">
+                <button id="eventos-ver-mais-btn" class="casos-ver-mais-btn">Ver todos os eventos <i class="fas fa-arrow-right"></i></button>
+            </div>
+
+        </div>
+    </main>
+
+    <footer id="contato">
+        <div class="footer-container">
+            <div class="footer-logo"><img src="{% static 'imagens/inova_vertical.png' %}" alt="Logo Inova Sudoeste de Minas"></div>
+            <div class="contact-info">
+                <h3>Entre em Contato</h3>
+                <div class="contact-item"><i class="fas fa-envelope"></i><span>inovasudoestedeminas@gmail.com</span></div>
+                <div class="contact-item"><i class="fab fa-instagram"></i><a href="https://www.instagram.com/inovasudoestedeminas/" style="color: white;">@inovasudoestedeminas</a></div>
+                <div class="contact-item"><i class="fa fa-link" aria-hidden="true"></i><a href="https://linktr.ee/InovaSudoestedeMinas" style="color: white;">Saiba mais</a></div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'scripts.js' %}"></script>
+    <script>
+        (function() {
+            const tabs = document.querySelectorAll('.casos-tab');
+            const busca = document.getElementById('evento-search');
+            const cards = document.querySelectorAll('#eventos-grid .caso-card');
+            const semResultado = document.getElementById('eventos-sem-resultado');
+            const verMaisBtn = document.getElementById('eventos-ver-mais-btn');
+            let tipoAtivo = '';
+
+            function aplicarFiltros() {
+                const termo = busca.value.toLowerCase().trim();
+                let algumVisivel = false;
+
+                cards.forEach(function(card) {
+                    const tipo = card.getAttribute('data-tipo');
+                    const titulo = card.getAttribute('data-titulo');
+                    const bateTipo = !tipoAtivo || tipo === tipoAtivo;
+                    const bateBusca = titulo.includes(termo);
+
+                    if (bateTipo && bateBusca) {
+                        card.classList.remove('caso-escondido-filtro');
+                        algumVisivel = true;
+                    } else {
+                        card.classList.add('caso-escondido-filtro');
+                    }
+                });
+
+                semResultado.style.display = algumVisivel ? 'none' : 'block';
+            }
+
+            tabs.forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(function(t) { t.classList.remove('active'); });
+                    tab.classList.add('active');
+                    tipoAtivo = tab.getAttribute('data-tipo');
+                    aplicarFiltros();
+                });
+            });
+
+            if (busca) {
+                busca.addEventListener('input', aplicarFiltros);
+            }
+
+            if (verMaisBtn) {
+                verMaisBtn.addEventListener('click', function() {
+                    document.querySelectorAll('#eventos-grid .caso-oculto').forEach(function(card) {
+                        card.classList.remove('caso-oculto');
+                    });
+                    verMaisBtn.style.display = 'none';
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

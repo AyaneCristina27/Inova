@@ -1,0 +1,213 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Especialistas - INova Sudoeste de Minas</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,900;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header id="header">
+        <nav>
+            <div class="logo-container">
+                <img src="{% static 'imagens/inova_simbologia.png' %}" alt="Logo Inova Sudoeste de Minas" class="header-logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/#sobre">Sobre</a></li>
+                <li><a href="/#ecossistema">Ecossistema</a></li>
+                <li><a href="/#parceiros">Parceiros</a></li>
+                <li><a href="/#startups">Startups</a></li>
+                <li><a href="/#indicadores">Indicadores</a></li>
+                <li><a href="/#membros">Membros</a></li>
+                <li><a href="/#recursos">Recursos</a></li>
+                <li><a href="/login/" class="btn-area-membros">Área de Membros</a></li>
+            </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="resource-page">
+        <div class="container">
+
+            <div class="casos-hero">
+                <div class="casos-hero-text">
+                    <h1>Especialistas</h1>
+                    <span class="casos-hero-underline"></span>
+                    <p class="section-intro" style="margin: 1.2rem 0 0; text-align: left;">Encontre profissionais e especialistas que podem contribuir com conhecimento, mentoria e soluções para impulsionar sua jornada de inovação.</p>
+                </div>
+                <div class="casos-hero-img">
+                    <img src="{% static 'imagens/persona_especialistas_ecossistema.png' %}" alt="Ilustração de especialistas">
+                </div>
+            </div>
+
+            <div class="especialistas-filtros-box">
+                <div class="especialistas-busca">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="especialista-search" placeholder="Buscar por nome, área de atuação ou instituição...">
+                </div>
+                <div class="especialistas-select-wrap">
+                    <select id="especialista-area">
+                        <option value="">Área de Atuação</option>
+                        {% for area in areas_atuacao %}
+                            <option value="{{ area }}">{{ area }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="especialistas-select-wrap">
+                    <select id="especialista-instituicao">
+                        <option value="">Instituição</option>
+                        {% for instituicao in instituicoes %}
+                            <option value="{{ instituicao }}">{{ instituicao }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="especialistas-select-wrap">
+                    <select id="especialista-apoio">
+                        <option value="">Tipo de Apoio</option>
+                        {% for valor, label in tipo_apoio_choices %}
+                            <option value="{{ label }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="especialistas-list-header">
+                <h2>Conheça nossos especialistas</h2>
+                <span class="casos-hero-underline" style="margin-top: 0.5rem;"></span>
+            </div>
+
+            <div class="especialistas-grid-v2" id="especialistas-grid">
+                {% for especialista in especialistas %}
+                    <div class="especialista-card-v2"
+                         data-nome="{{ especialista.nome|lower }}"
+                         data-area="{{ especialista.area_atuacao|lower }}"
+                         data-instituicao="{{ especialista.ator.nome|default:''|lower }}"
+                         data-apoio="{{ especialista.get_tipo_apoio_display|default:''|lower }}">
+                        <div class="especialista-card-v2-header">
+                            <div class="especialista-avatar">
+                                {% if especialista.foto %}
+                                    <img src="{{ especialista.foto.url }}" alt="{{ especialista.nome }}">
+                                {% else %}
+                                    <i class="fas fa-user"></i>
+                                {% endif %}
+                            </div>
+                            <div class="especialista-card-v2-nome">
+                                <h3>{{ especialista.nome }}</h3>
+                                {% with primeira_area=especialista.areas_lista|first %}
+                                    {% if primeira_area %}
+                                        <p class="especialista-area-principal">{{ primeira_area }}</p>
+                                    {% endif %}
+                                {% endwith %}
+                                {% if especialista.ator %}
+                                    <p class="especialista-instituicao">{{ especialista.ator.nome }}</p>
+                                {% endif %}
+                                {% if especialista.ator.municipio %}
+                                    <p class="especialista-local"><i class="fas fa-map-marker-alt"></i> {{ especialista.ator.municipio }}</p>
+                                {% endif %}
+                            </div>
+                            {% if especialista.destaque %}
+                                <span class="especialista-destaque-badge"><i class="fas fa-star"></i> Em destaque</span>
+                            {% endif %}
+                        </div>
+
+                        {% if especialista.bio %}
+                            <p class="especialista-bio">{{ especialista.bio|truncatewords:20 }}</p>
+                        {% endif %}
+
+                        {% if especialista.areas_lista %}
+                            <p class="especialista-tags-label">Áreas de atuação</p>
+                            <div class="especialista-tags">
+                                {% for area in especialista.areas_lista %}
+                                    <span class="especialista-tag">{{ area }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p class="loading-message">Nenhum especialista cadastrado no momento.</p>
+                {% endfor %}
+            </div>
+            <p id="especialistas-sem-resultado" style="display:none; text-align:center; color:#888; margin-top:2rem;">Nenhum especialista encontrado com esse filtro.</p>
+
+            <div class="especialistas-cta">
+                <div class="especialistas-cta-icon"><i class="fas fa-lightbulb"></i></div>
+                <div class="especialistas-cta-text">
+                    <h4>É especialista e quer fazer parte?</h4>
+                    <p>Compartilhe seu conhecimento e ajude a fortalecer o ecossistema de inovação da nossa região.</p>
+                </div>
+                <a href="/nossos-especialistas/cadastrar/" class="especialistas-cta-btn">Cadastrar como especialista <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer id="contato">
+        <div class="footer-container">
+            <div class="footer-logo"><img src="{% static 'imagens/inova_vertical.png' %}" alt="Logo Inova Sudoeste de Minas"></div>
+            <div class="contact-info">
+                <h3>Entre em Contato</h3>
+                <div class="contact-item"><i class="fas fa-envelope"></i><span>inovasudoestedeminas@gmail.com</span></div>
+                <div class="contact-item"><i class="fab fa-instagram"></i><a href="https://www.instagram.com/inovasudoestedeminas/" style="color: white;">@inovasudoestedeminas</a></div>
+                <div class="contact-item"><i class="fa fa-link" aria-hidden="true"></i><a href="https://linktr.ee/InovaSudoestedeMinas" style="color: white;">Saiba mais</a></div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'scripts.js' %}"></script>
+    <script>
+        (function() {
+            const busca = document.getElementById('especialista-search');
+            const area = document.getElementById('especialista-area');
+            const instituicao = document.getElementById('especialista-instituicao');
+            const apoio = document.getElementById('especialista-apoio');
+            const cards = document.querySelectorAll('.especialista-card-v2');
+            const semResultado = document.getElementById('especialistas-sem-resultado');
+
+            function filtrar() {
+                const termo = busca.value.toLowerCase().trim();
+                const areaSelecionada = area.value.toLowerCase();
+                const instituicaoSelecionada = instituicao.value.toLowerCase();
+                const apoioSelecionado = apoio.value.toLowerCase();
+                let algumVisivel = false;
+
+                cards.forEach(function(card) {
+                    const nome = card.getAttribute('data-nome');
+                    const areaCard = card.getAttribute('data-area');
+                    const instituicaoCard = card.getAttribute('data-instituicao');
+                    const apoioCard = card.getAttribute('data-apoio');
+
+                    const bateNome = nome.includes(termo) || areaCard.includes(termo) || instituicaoCard.includes(termo);
+                    const bateArea = !areaSelecionada || areaCard.includes(areaSelecionada);
+                    const bateInstituicao = !instituicaoSelecionada || instituicaoCard === instituicaoSelecionada;
+                    const bateApoio = !apoioSelecionado || apoioCard === apoioSelecionado;
+
+                    if (bateNome && bateArea && bateInstituicao && bateApoio) {
+                        card.style.display = '';
+                        algumVisivel = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                semResultado.style.display = algumVisivel ? 'none' : 'block';
+            }
+
+            if (busca) {
+                busca.addEventListener('input', filtrar);
+                area.addEventListener('change', filtrar);
+                instituicao.addEventListener('change', filtrar);
+                apoio.addEventListener('change', filtrar);
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marcar Reunião - Painel do Gestor</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@900&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --inova-laranja: #F2871F;
+            --inova-laranja-escura: #D9740F;
+            --inova-preto: #1A1A1A;
+        }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f7f7f7; }
+        h1, h2, h3 { font-family: 'Archivo', sans-serif; }
+        .navbar-inova { background-color: var(--inova-preto) !important; }
+        .btn-success { background-color: var(--inova-laranja); border-color: var(--inova-laranja); }
+        .btn-success:hover { background-color: var(--inova-laranja-escura); border-color: var(--inova-laranja-escura); }
+        .btn-warning { background-color: var(--inova-preto); border-color: var(--inova-preto); color: #fff; }
+        .btn-warning:hover { background-color: #000; border-color: #000; color: #fff; }
+        thead { background-color: var(--inova-preto); color: #fff; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-inova">
+        <a class="navbar-brand" href="/painel/">Painel do Gestor - INova</a>
+        <a href="/logout/" class="btn btn-outline-light ml-auto">Sair</a>
+    </nav>
+
+    <div class="container mt-5">
+        <a href="/reunioes/" class="btn btn-secondary mb-3">Voltar</a>
+        <h2 class="mb-4">Marcar Reunião</h2>
+
+        {% if messages %}
+            <ul class="messages list-unstyled">
+                {% for message in messages %}
+                    <li style="color: red;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">Salvar</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membros do INova</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,900;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header id="header">
+        <nav>
+            <div class="logo-container">
+                <img src="{% static 'imagens/inova_simbologia.png' %}" alt="Logo Inova Sudoeste de Minas" class="header-logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/#sobre">Sobre</a></li>
+                <li><a href="/#ecossistema">Ecossistema</a></li>
+                <li><a href="/#parceiros">Parceiros</a></li>
+                <li><a href="/#startups">Startups</a></li>
+                <li><a href="/#indicadores">Indicadores</a></li>
+                <li><a href="/#membros">Membros</a></li>
+                <li><a href="/#recursos">Recursos</a></li>
+                <li><a href="/login/" class="btn-area-membros">Área de Membros</a></li>
+            </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="resource-page">
+        <div class="container">
+            <h1>Membros do INova</h1>
+            <p class="section-intro">
+                Pessoas que estão efetivamente contribuindo na realização de ações de planejamento e fortalecimento do Ecossistema
+                em termos de gestão, estruturação, orquestração. Os membros ativos se organizam em eixos ou vertentes e participam das
+                reuniões nos eixos e reuniões em grupo geral.
+            </p>
+
+            <div class="members-grid">
+                {% for membro in membros %}
+                    <div class="member-card">
+                        {% if membro.foto %}
+                            <img src="{{ membro.foto.url }}" alt="Foto de {{ membro.nome }}">
+                        {% endif %}
+                        <div class="member-info">
+                            <h3>{{ membro.nome }}</h3>
+                            <p>
+                                {% if membro.grupo %}Grupo: {{ membro.grupo }} | {% endif %}
+                                {{ membro.descricao }}
+                            </p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="loading-message">Nenhum membro cadastrado no momento.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <footer id="contato">
+        <div class="footer-container">
+            <div class="footer-logo"><img src="{% static 'imagens/inova_vertical.png' %}" alt="Logo Inova Sudoeste de Minas"></div>
+            <div class="contact-info">
+                <h3>Entre em Contato</h3>
+                <div class="contact-item"><i class="fas fa-envelope"></i><span>inovasudoestedeminas@gmail.com</span></div>
+                <div class="contact-item"><i class="fab fa-instagram"></i><a href="https://www.instagram.com/inovasudoestedeminas/" style="color: white;">@inovasudoestedeminas</a></div>
+                <div class="contact-item"><i class="fa fa-link" aria-hidden="true"></i><a href="https://linktr.ee/InovaSudoestedeMinas" style="color: white;">Saiba mais</a></div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

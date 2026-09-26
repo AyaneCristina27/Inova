@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casos de Sucesso - INova Sudoeste de Minas</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,900;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header id="header">
+        <nav>
+            <div class="logo-container">
+                <img src="{% static 'imagens/inova_simbologia.png' %}" alt="Logo Inova Sudoeste de Minas" class="header-logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/#sobre">Sobre</a></li>
+                <li><a href="/#ecossistema">Ecossistema</a></li>
+                <li><a href="/#parceiros">Parceiros</a></li>
+                <li><a href="/#startups">Startups</a></li>
+                <li><a href="/#indicadores">Indicadores</a></li>
+                <li><a href="/#membros">Membros</a></li>
+                <li><a href="/#recursos">Recursos</a></li>
+                <li><a href="/login/" class="btn-area-membros">Área de Membros</a></li>
+            </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="resource-page">
+        <div class="container">
+
+            <div class="casos-hero">
+                <div class="casos-hero-text">
+                    <h1>Casos de Sucesso</h1>
+                    <span class="casos-hero-underline"></span>
+                    <p class="section-intro" style="margin: 1.2rem 0 0; text-align: left;">Histórias inspiradoras de startups e instituições que se destacaram no ecossistema de inovação do sudoeste de Minas Gerais.</p>
+                </div>
+                <div class="casos-hero-img">
+                    <img src="{% static 'imagens/foguete_montanhas_caso_sucesso.png' %}" alt="Ilustração de sucesso">
+                </div>
+            </div>
+
+            <div class="casos-filtros-box">
+                <div class="casos-tabs">
+                    <button class="casos-tab active" data-categoria="">
+                        <i class="fas fa-th-large"></i> Todos
+                    </button>
+                    <button class="casos-tab" data-categoria="startup">
+                        <i class="fas fa-rocket"></i> Startups
+                    </button>
+                    <button class="casos-tab" data-categoria="instituicao">
+                        <i class="fas fa-university"></i> Instituições
+                    </button>
+                    <button class="casos-tab" data-categoria="investimento">
+                        <i class="fas fa-chart-line"></i> Investimentos
+                    </button>
+                    <button class="casos-tab" data-categoria="parceria">
+                        <i class="fas fa-handshake"></i> Parcerias
+                    </button>
+                </div>
+                <div class="casos-busca">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="caso-search" placeholder="Buscar casos...">
+                </div>
+            </div>
+
+            <div class="casos-grid" id="casos-grid">
+                {% for caso in casos_sucesso %}
+                    <div class="caso-card{% if forloop.counter > 3 %} caso-oculto{% endif %}"
+                         data-categoria="{{ caso.categoria }}"
+                         data-titulo="{{ caso.titulo|lower }}">
+                        {% if caso.imagem %}
+                            <div class="caso-img">
+                                <img src="{{ caso.imagem.url }}" alt="{{ caso.titulo }}">
+                            </div>
+                        {% endif %}
+                        <div class="caso-conteudo">
+                            <span class="caso-badge caso-badge-{{ caso.categoria }}">{{ caso.get_categoria_display|upper }}</span>
+                            <h3>{{ caso.titulo }}</h3>
+                            <div class="caso-meta">
+                                <span><i class="fas fa-calendar"></i> {{ caso.data_publicacao|date:"d/m/Y" }}</span>
+                                {% if caso.startup %}
+                                    <span><i class="fas fa-tag"></i> {{ caso.startup.nome }}</span>
+                                {% elif caso.ator %}
+                                    <span><i class="fas fa-tag"></i> {{ caso.ator.nome }}</span>
+                                {% endif %}
+                            </div>
+                            {% if caso.resumo %}
+                                <p>{{ caso.resumo }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="loading-message">Nenhum caso de sucesso publicado no momento.</p>
+                {% endfor %}
+            </div>
+            <p id="casos-sem-resultado" style="display:none; text-align:center; color:#888; margin-top:2rem;">Nenhum caso encontrado com esse filtro.</p>
+
+            <div class="casos-ver-mais-wrap">
+                <button id="casos-ver-mais-btn" class="casos-ver-mais-btn">Ver mais casos de sucesso <i class="fas fa-arrow-right"></i></button>
+            </div>
+
+        </div>
+    </main>
+
+    <footer id="contato">
+        <div class="footer-container">
+            <div class="footer-logo"><img src="{% static 'imagens/inova_vertical.png' %}" alt="Logo Inova Sudoeste de Minas"></div>
+            <div class="contact-info">
+                <h3>Entre em Contato</h3>
+                <div class="contact-item"><i class="fas fa-envelope"></i><span>inovasudoestedeminas@gmail.com</span></div>
+                <div class="contact-item"><i class="fab fa-instagram"></i><a href="https://www.instagram.com/inovasudoestedeminas/" style="color: white;">@inovasudoestedeminas</a></div>
+                <div class="contact-item"><i class="fa fa-link" aria-hidden="true"></i><a href="https://linktr.ee/InovaSudoestedeMinas" style="color: white;">Saiba mais</a></div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'scripts.js' %}"></script>
+    <script>
+        (function() {
+            const tabs = document.querySelectorAll('.casos-tab');
+            const busca = document.getElementById('caso-search');
+            const cards = document.querySelectorAll('.caso-card');
+            const semResultado = document.getElementById('casos-sem-resultado');
+            const verMaisBtn = document.getElementById('casos-ver-mais-btn');
+            let categoriaAtiva = '';
+
+            function aplicarFiltros() {
+                const termo = busca.value.toLowerCase().trim();
+                let algumVisivel = false;
+
+                cards.forEach(function(card) {
+                    const categoria = card.getAttribute('data-categoria');
+                    const titulo = card.getAttribute('data-titulo');
+                    const bateCategoria = !categoriaAtiva || categoria === categoriaAtiva;
+                    const bateBusca = titulo.includes(termo);
+
+                    if (bateCategoria && bateBusca) {
+                        card.classList.remove('caso-escondido-filtro');
+                        algumVisivel = true;
+                    } else {
+                        card.classList.add('caso-escondido-filtro');
+                    }
+                });
+
+                semResultado.style.display = algumVisivel ? 'none' : 'block';
+            }
+
+            tabs.forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(function(t) { t.classList.remove('active'); });
+                    tab.classList.add('active');
+                    categoriaAtiva = tab.getAttribute('data-categoria');
+                    aplicarFiltros();
+                });
+            });
+
+            if (busca) {
+                busca.addEventListener('input', aplicarFiltros);
+            }
+
+            if (verMaisBtn) {
+                verMaisBtn.addEventListener('click', function() {
+                    document.querySelectorAll('.caso-oculto').forEach(function(card) {
+                        card.classList.remove('caso-oculto');
+                    });
+                    verMaisBtn.style.display = 'none';
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

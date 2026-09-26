@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projetos do Ecossistema - INova Sudoeste de Minas</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,900;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header id="header">
+        <nav>
+            <div class="logo-container">
+                <img src="{% static 'imagens/inova_simbologia.png' %}" alt="Logo Inova Sudoeste de Minas" class="header-logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/#sobre">Sobre</a></li>
+                <li><a href="/#ecossistema">Ecossistema</a></li>
+                <li><a href="/#parceiros">Parceiros</a></li>
+                <li><a href="/#startups">Startups</a></li>
+                <li><a href="/#indicadores">Indicadores</a></li>
+                <li><a href="/#membros">Membros</a></li>
+                <li><a href="/#recursos">Recursos</a></li>
+                <li><a href="/login/" class="btn-area-membros">Área de Membros</a></li>
+            </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="resource-page">
+        <div class="container">
+
+            <div class="casos-hero">
+                <div class="casos-hero-text">
+                    <h1>Projetos do Ecossistema</h1>
+                    <span class="casos-hero-underline"></span>
+                    <p class="section-intro" style="margin: 1.2rem 0 0; text-align: left;">Conheça os projetos em desenvolvimento no ecossistema de inovação do sudoeste de Minas Gerais.</p>
+                </div>
+                <div class="casos-hero-img">
+                    <img src="{% static 'imagens/lampada_projetos_ecossistema.png' %}" alt="Ilustração de projetos">
+                </div>
+            </div>
+
+            <div class="casos-filtros-box">
+                <div class="casos-tabs">
+                    <button class="casos-tab active" data-status="">
+                        <i class="fas fa-th-large"></i> Todos
+                    </button>
+                    <button class="casos-tab" data-status="planejado">
+                        <i class="fas fa-lightbulb"></i> Planejado
+                    </button>
+                    <button class="casos-tab" data-status="em_andamento">
+                        <i class="fas fa-clock"></i> Em andamento
+                    </button>
+                    <button class="casos-tab" data-status="concluido">
+                        <i class="fas fa-check-circle"></i> Concluídos
+                    </button>
+                </div>
+                <div class="casos-busca">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="projeto-search" placeholder="Buscar projetos...">
+                </div>
+            </div>
+
+            <div class="casos-grid" id="projetos-grid">
+                {% for projeto in projetos %}
+                    <div class="caso-card{% if forloop.counter > 3 %} caso-oculto{% endif %}"
+                         data-status="{{ projeto.status }}"
+                         data-titulo="{{ projeto.titulo|lower }}">
+                        {% if projeto.imagem %}
+                            <div class="caso-img">
+                                <img src="{{ projeto.imagem.url }}" alt="{{ projeto.titulo }}">
+                            </div>
+                        {% endif %}
+                        <div class="caso-conteudo">
+                            <span class="caso-badge caso-badge-{{ projeto.status }}">{{ projeto.get_status_display|upper }}</span>
+                            <h3>{{ projeto.titulo }}</h3>
+                            <div class="caso-meta">
+                                {% if projeto.data_inicio %}
+                                    <span><i class="fas fa-calendar"></i> Início: {{ projeto.data_inicio|date:"d/m/Y" }}</span>
+                                {% endif %}
+                                {% if projeto.data_fim %}
+                                    <span><i class="fas fa-calendar-check"></i> Fim: {{ projeto.data_fim|date:"d/m/Y" }}</span>
+                                {% endif %}
+                            </div>
+                            {% if projeto.descricao %}
+                                <p>{{ projeto.descricao|truncatewords:22 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="loading-message">Nenhum projeto cadastrado no momento.</p>
+                {% endfor %}
+            </div>
+            <p id="projetos-sem-resultado" style="display:none; text-align:center; color:#888; margin-top:2rem;">Nenhum projeto encontrado com esse filtro.</p>
+
+            <div class="casos-ver-mais-wrap">
+                <button id="projetos-ver-mais-btn" class="casos-ver-mais-btn">Ver todos os projetos <i class="fas fa-arrow-right"></i></button>
+            </div>
+
+        </div>
+    </main>
+
+    <footer id="contato">
+        <div class="footer-container">
+            <div class="footer-logo"><img src="{% static 'imagens/inova_vertical.png' %}" alt="Logo Inova Sudoeste de Minas"></div>
+            <div class="contact-info">
+                <h3>Entre em Contato</h3>
+                <div class="contact-item"><i class="fas fa-envelope"></i><span>inovasudoestedeminas@gmail.com</span></div>
+                <div class="contact-item"><i class="fab fa-instagram"></i><a href="https://www.instagram.com/inovasudoestedeminas/" style="color: white;">@inovasudoestedeminas</a></div>
+                <div class="contact-item"><i class="fa fa-link" aria-hidden="true"></i><a href="https://linktr.ee/InovaSudoestedeMinas" style="color: white;">Saiba mais</a></div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'scripts.js' %}"></script>
+    <script>
+        (function() {
+            const tabs = document.querySelectorAll('.casos-tab');
+            const busca = document.getElementById('projeto-search');
+            const cards = document.querySelectorAll('#projetos-grid .caso-card');
+            const semResultado = document.getElementById('projetos-sem-resultado');
+            const verMaisBtn = document.getElementById('projetos-ver-mais-btn');
+            let statusAtivo = '';
+
+            function aplicarFiltros() {
+                const termo = busca.value.toLowerCase().trim();
+                let algumVisivel = false;
+
+                cards.forEach(function(card) {
+                    const status = card.getAttribute('data-status');
+                    const titulo = card.getAttribute('data-titulo');
+                    const bateStatus = !statusAtivo || status === statusAtivo;
+                    const bateBusca = titulo.includes(termo);
+
+                    if (bateStatus && bateBusca) {
+                        card.classList.remove('caso-escondido-filtro');
+                        algumVisivel = true;
+                    } else {
+                        card.classList.add('caso-escondido-filtro');
+                    }
+                });
+
+                semResultado.style.display = algumVisivel ? 'none' : 'block';
+            }
+
+            tabs.forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(function(t) { t.classList.remove('active'); });
+                    tab.classList.add('active');
+                    statusAtivo = tab.getAttribute('data-status');
+                    aplicarFiltros();
+                });
+            });
+
+            if (busca) {
+                busca.addEventListener('input', aplicarFiltros);
+            }
+
+            if (verMaisBtn) {
+                verMaisBtn.addEventListener('click', function() {
+                    document.querySelectorAll('#projetos-grid .caso-oculto').forEach(function(card) {
+                        card.classList.remove('caso-oculto');
+                    });
+                    verMaisBtn.style.display = 'none';
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

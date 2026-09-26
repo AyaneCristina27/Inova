@@ -1,0 +1,315 @@
+{% load static %}
+{% load calendar_tags %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Gestor - INova</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;900&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --inova-laranja: #E5872F;
+            --inova-laranja-clara: #FCE9D8;
+            --inova-preto: #1A1A1A;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #FFFDFB; }
+
+        .navbar-dashboard {
+            background-color: var(--inova-preto);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar-dashboard .navbar-brand {
+            color: white;
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .navbar-dashboard .navbar-brand img.navbar-logo { height: 30px; width: auto; }
+        .btn-sair {
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+        }
+        .btn-sair:hover { background-color: rgba(255,255,255,0.1); }
+
+        .dashboard-hero {
+            background: linear-gradient(180deg, #FDF3EA 0%, #FFFFFF 40%);
+            padding: 3rem 2rem 4rem;
+            min-height: calc(100vh - 68px);
+        }
+        .dashboard-container { max-width: 1100px; margin: 0 auto; }
+        .hello-tag { color: var(--inova-laranja); font-weight: 600; margin-bottom: 0.4rem; }
+        .dashboard-hero h1 {
+            font-family: 'Archivo', sans-serif;
+            font-weight: 900;
+            font-size: 2.1rem;
+            margin-bottom: 1.2rem;
+            color: var(--inova-preto);
+        }
+        .subtitle { display: flex; align-items: center; gap: 14px; color: #666; margin-bottom: 2.5rem; max-width: 640px; }
+        .subtitle .bar { width: 4px; height: 38px; background-color: var(--inova-laranja); border-radius: 2px; flex-shrink: 0; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .dash-card {
+            background-color: white;
+            border-radius: 14px;
+            padding: 1.4rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-top: 3px solid var(--inova-laranja);
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .dash-card:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(0,0,0,0.1); }
+        .dash-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background-color: var(--inova-laranja);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        .dash-info h3 { font-size: 1.05rem; margin-bottom: 4px; color: var(--inova-preto); font-family: 'Archivo', sans-serif; }
+        .dash-info p { font-size: 0.83rem; color: #888; margin: 0; line-height: 1.4; padding-right: 1.5rem; }
+        .dash-arrow {
+            position: absolute;
+            top: 1.4rem;
+            right: 1.2rem;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1.5px solid var(--inova-laranja);
+            color: var(--inova-laranja);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .dash-card-dark { background-color: var(--inova-preto); border-top: 3px solid var(--inova-preto); }
+        .dash-card-dark .dash-info h3 { color: white; }
+        .dash-card-dark .dash-info p { color: #999; }
+
+        .dashboard-tip {
+            background-color: var(--inova-laranja-clara);
+            border-radius: 14px;
+            padding: 1.4rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .tip-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--inova-laranja);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .tip-text h4 { margin-bottom: 2px; font-size: 0.98rem; color: var(--inova-preto); font-family: 'Archivo', sans-serif; }
+        .tip-text p { margin: 0; font-size: 0.87rem; color: #666; }
+        .tip-illustration { margin-left: auto; color: rgba(229,135,47,0.35); font-size: 2rem; }
+
+        .reunioes-widget {
+            background-color: white;
+            border-radius: 14px;
+            padding: 1.4rem 1.6rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-left: 4px solid var(--inova-laranja);
+        }
+        .reunioes-widget-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        .reunioes-widget-header i { color: var(--inova-laranja); font-size: 1.1rem; }
+        .reunioes-widget-header h3 { font-family: 'Archivo', sans-serif; font-size: 1.05rem; color: var(--inova-preto); }
+        .reunioes-widget-header a {
+            margin-left: auto;
+            font-size: 0.82rem;
+            color: var(--inova-laranja);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .reunioes-widget-header a:hover { text-decoration: underline; }
+        .reuniao-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .reuniao-item:last-child { border-bottom: none; }
+        .reuniao-data {
+            background-color: var(--inova-laranja-clara);
+            color: var(--inova-laranja);
+            font-weight: 700;
+            font-size: 0.78rem;
+            padding: 6px 10px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 60px;
+            flex-shrink: 0;
+        }
+        .reuniao-info h4 { font-size: 0.92rem; color: var(--inova-preto); margin-bottom: 2px; }
+        .reuniao-info p { font-size: 0.8rem; color: #888; margin: 0; }
+        .reunioes-vazio { font-size: 0.88rem; color: #999; padding: 0.5rem 0; }
+        .reuniao-calendario { margin-left: auto; display: flex; gap: 8px; flex-shrink: 0; }
+        .reuniao-calendario a {
+            color: var(--inova-laranja);
+            font-size: 0.9rem;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid var(--inova-laranja);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .reuniao-calendario a:hover { background-color: var(--inova-laranja); color: white; }
+
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .tip-illustration { display: none; }
+            .dashboard-hero { padding: 2rem 1.2rem 3rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar-dashboard">
+        <a href="/painel/" class="navbar-brand"><img src="{% static 'imagens/inova_simbologia.png' %}" alt="Logo INova" class="navbar-logo"> Painel do Gestor - INova</a>
+        <a href="/logout/" class="btn-sair"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </nav>
+
+    <div class="dashboard-hero">
+        <div class="dashboard-container">
+            <p class="hello-tag">Olá, {{ request.user.username }}! 👋</p>
+            <h1>Bem-vindo(a) ao Painel</h1>
+            <p class="subtitle"><span class="bar"></span>Gerencie os conteúdos e cadastros do ecossistema de inovação de forma rápida e eficiente.</p>
+
+            <div class="reunioes-widget">
+                <div class="reunioes-widget-header">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>Próximas Reuniões</h3>
+                    <a href="/reunioes/">Ver todas</a>
+                </div>
+                {% for reuniao in proximas_reunioes %}
+                    <div class="reuniao-item">
+                        <div class="reuniao-data">{{ reuniao.data_hora|date:"d/m" }}<br>{{ reuniao.data_hora|date:"H:i" }}</div>
+                        <div class="reuniao-info">
+                            <h4>{{ reuniao.titulo }}</h4>
+                            <p>{{ reuniao.local|default:"Local não informado" }}</p>
+                        </div>
+                        <div class="reuniao-calendario">
+                            <a href="{% google_calendar_link reuniao.titulo reuniao.data_hora local=reuniao.local descricao=reuniao.descricao %}" target="_blank" rel="noopener noreferrer" title="Adicionar ao Google Calendar"><i class="fab fa-google"></i></a>
+                            <a href="/reunioes/{{ reuniao.id }}/calendario/" title="Baixar .ics"><i class="fas fa-download"></i></a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="reunioes-vazio">Nenhuma reunião marcada no momento. <a href="/reunioes/cadastrar/">Marcar uma?</a></p>
+                {% endfor %}
+            </div>
+
+            <div class="dashboard-grid">
+                <a href="/atores/" class="dash-card">
+                    <div class="dash-icon"><i class="fas fa-users"></i></div>
+                    <div class="dash-info"><h3>Atores</h3><p>Gerencie os atores e organizações do ecossistema.</p></div>
+                    <div class="dash-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="/startups/" class="dash-card">
+                    <div class="dash-icon"><i class="fas fa-rocket"></i></div>
+                    <div class="dash-info"><h3>Startups</h3><p>Cadastre e acompanhe as startups do ecossistema.</p></div>
+                    <div class="dash-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="/projetos/" class="dash-card">
+                    <div class="dash-icon"><i class="fas fa-briefcase"></i></div>
+                    <div class="dash-info"><h3>Projetos</h3><p>Gerencie os projetos e suas informações.</p></div>
+                    <div class="dash-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="/eventos/" class="dash-card">
+                    <div class="dash-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="dash-info"><h3>Eventos</h3><p>Cadastre eventos e acompanhe as inscrições.</p></div>
+                    <div class="dash-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="/especialistas/" class="dash-card">
+                    <div class="dash-icon"><i class="fas fa-user-tie"></i></div>
+                    <div class="dash-info"><h3>Especialistas</h3><p>Gerencie especialistas e suas áreas de atuação.</p></div>
+                    <div class="dash-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="/casos-sucesso/" class="dash-card">
+                    <div class="dash-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="dash-info"><h3>Casos de Sucesso</h3><p>Divulgue histórias e resultados inspiradores.</p></div>
+                    <div class="dash-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="/reunioes/" class="dash-card">
+                    <div class="dash-icon"><i class="fas fa-user-friends"></i></div>
+                    <div class="dash-info"><h3>Reuniões</h3><p>Organize reuniões e registre as atas.</p></div>
+                    <div class="dash-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="/membros/" class="dash-card">
+                    <div class="dash-icon"><i class="fas fa-id-badge"></i></div>
+                    <div class="dash-info"><h3>Membros</h3><p>Gerencie os membros ativos do ecossistema.</p></div>
+                    <div class="dash-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="/municipios/" class="dash-card">
+                    <div class="dash-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="dash-info"><h3>Municípios</h3><p>Gerencie os municípios do ecossistema.</p></div>
+                    <div class="dash-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="/categorias/" class="dash-card">
+                    <div class="dash-icon"><i class="fas fa-th-large"></i></div>
+                    <div class="dash-info"><h3>Categorias de Ator</h3><p>Gerencie as categorias de atores.</p></div>
+                    <div class="dash-arrow"><i class="fas fa-arrow-right"></i></div>
+                </a>
+            </div>
+
+            <div class="dashboard-tip">
+                <div class="tip-icon"><i class="fas fa-lightbulb"></i></div>
+                <div class="tip-text">
+                    <h4>Dica rápida</h4>
+                    <p>Mantenha as informações sempre atualizadas para fortalecer o ecossistema de inovação!</p>
+                </div>
+                <div class="tip-illustration"><i class="fas fa-chart-line"></i></div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

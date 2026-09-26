@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todas as Startups - INova</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,900;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header id="header">
+        <nav>
+            <div class="logo-container">
+                <img src="{% static 'imagens/inova_simbologia.png' %}" alt="Logo Inova Sudoeste de Minas" class="header-logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/#sobre">Sobre</a></li>
+                <li><a href="/#ecossistema">Ecossistema</a></li>
+                <li><a href="/#parceiros">Parceiros</a></li>
+                <li><a href="/#startups">Startups</a></li>
+                <li><a href="/#indicadores">Indicadores</a></li>
+                <li><a href="/#membros">Membros</a></li>
+                <li><a href="/#recursos">Recursos</a></li>
+                <li><a href="/login/" class="btn-area-membros">Área de Membros</a></li>
+            </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="resource-page">
+        <div class="container">
+            <div class="startups-title-wrap">
+                <span class="startups-dash"></span>
+                <span class="startups-icon-top"><i class="fas fa-rocket"></i></span>
+                <span class="startups-dash"></span>
+            </div>
+            <h1>Todas as Startups</h1>
+            <p class="section-intro">Conheça todas as startups que estão inovando e crescendo no sudoeste de Minas Gerais</p>
+
+            <div class="startups-filtros">
+                <div class="startups-busca">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="startup-search" placeholder="Buscar startups...">
+                </div>
+                <div class="startups-select-wrap">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <select id="startup-cidade">
+                        <option value="">Todas as cidades</option>
+                        {% for municipio in municipios_startups %}
+                            <option value="{{ municipio.nome }}">{{ municipio.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="startups-grid-v2" id="startups-grid">
+                {% for startup in startups %}
+                    <div class="startup-card-v2 startup-card" data-nome="{{ startup.nome|lower }}" data-cidade="{{ startup.municipio.nome }}">
+                        <div class="startup-icon-circle">
+    {% if startup.logo %}
+        <img src="{{ startup.logo.url }}" alt="Logo {{ startup.nome }}">
+    {% else %}
+        <i class="fas fa-rocket"></i>
+    {% endif %}
+</div>
+                        {% if startup.setor_atuacao %}
+                            <span class="startup-badge">{{ startup.setor_atuacao|upper }}</span>
+                        {% endif %}
+                        <h3>{{ startup.nome }}</h3>
+                        {% if startup.descricao %}
+                            <p class="startup-desc">{{ startup.descricao|truncatewords:22 }}</p>
+                        {% endif %}
+                        <div class="startup-footer">
+                            <span><i class="fas fa-map-marker-alt"></i>{{ startup.municipio }}</span>
+                            <span class="startup-sep">|</span>
+                            <span><i class="fas fa-briefcase"></i>Estágio: {{ startup.get_estagio_display }}</span>
+                        </div>
+                        {% if startup.site %}
+                            <a href="{{ startup.site }}" target="_blank" rel="noopener noreferrer" class="startup-visit-btn">Visitar site <i class="fas fa-external-link-alt"></i></a>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p>Nenhuma startup cadastrada no momento.</p>
+                {% endfor %}
+            </div>
+            <p id="startups-sem-resultado" style="display:none; text-align:center; color:#888; margin-top:2rem;">Nenhuma startup encontrada com esse filtro.</p>
+        </div>
+    </main>
+
+    <footer id="contato">
+        <div class="footer-container">
+            <div class="footer-logo"><img src="{% static 'imagens/inova_vertical.png' %}" alt="Logo Inova Sudoeste de Minas"></div>
+            <div class="contact-info">
+                <h3>Entre em Contato</h3>
+                <div class="contact-item"><i class="fas fa-envelope"></i><span>inovasudoestedeminas@gmail.com</span></div>
+                <div class="contact-item"><i class="fab fa-instagram"></i><a href="https://www.instagram.com/inovasudoestedeminas/" style="color: white;">@inovasudoestedeminas</a></div>
+                <div class="contact-item"><i class="fa fa-link" aria-hidden="true"></i><a href="https://linktr.ee/InovaSudoestedeMinas" style="color: white;">Saiba mais</a></div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            const busca = document.getElementById('startup-search');
+            const cidade = document.getElementById('startup-cidade');
+            const cards = document.querySelectorAll('.startup-card');
+            const semResultado = document.getElementById('startups-sem-resultado');
+
+            function filtrar() {
+                const termo = busca.value.toLowerCase().trim();
+                const cidadeSelecionada = cidade.value;
+                let algumVisivel = false;
+
+                cards.forEach(function(card) {
+                    const nome = card.getAttribute('data-nome');
+                    const cardCidade = card.getAttribute('data-cidade');
+                    const bateNome = nome.includes(termo);
+                    const bateCidade = !cidadeSelecionada || cardCidade === cidadeSelecionada;
+
+                    if (bateNome && bateCidade) {
+                        card.style.display = '';
+                        algumVisivel = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                semResultado.style.display = algumVisivel ? 'none' : 'block';
+            }
+
+            if (busca && cidade) {
+                busca.addEventListener('input', filtrar);
+                cidade.addEventListener('change', filtrar);
+            }
+        })();
+    </script>
+</body>
+</html>

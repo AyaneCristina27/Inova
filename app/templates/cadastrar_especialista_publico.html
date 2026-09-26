@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar como Especialista - INova Sudoeste de Minas</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,900;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header id="header">
+        <nav>
+            <div class="logo-container">
+                <img src="{% static 'imagens/inova_simbologia.png' %}" alt="Logo Inova Sudoeste de Minas" class="header-logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/#sobre">Sobre</a></li>
+                <li><a href="/#ecossistema">Ecossistema</a></li>
+                <li><a href="/#parceiros">Parceiros</a></li>
+                <li><a href="/#startups">Startups</a></li>
+                <li><a href="/#indicadores">Indicadores</a></li>
+                <li><a href="/#membros">Membros</a></li>
+                <li><a href="/#recursos">Recursos</a></li>
+                <li><a href="/login/" class="btn-area-membros">Área de Membros</a></li>
+            </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="resource-page">
+        <div class="container" style="max-width: 640px;">
+
+            <div class="especialistas-hero">
+                <div class="especialistas-hero-icon"><i class="fas fa-lightbulb"></i></div>
+                <h1>Cadastrar como Especialista</h1>
+                <p class="section-intro">Preencha o formulário abaixo para compartilhar seu conhecimento com o ecossistema. Seu cadastro será revisado pela equipe do INova antes de aparecer no site.</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="cadastro-especialista-form">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                    <div class="login-error">Verifique os campos abaixo e tente novamente.</div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ form.nome.id_for_label }}">Nome completo</label>
+                    {{ form.nome }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.area_atuacao.id_for_label }}">Área(s) de atuação</label>
+                    {{ form.area_atuacao }}
+                    <small>Separe por vírgula se tiver mais de uma. Ex: Marketing, Branding, Comunicação</small>
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.tipo_apoio.id_for_label }}">Tipo de apoio que você pode oferecer</label>
+                    {{ form.tipo_apoio }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.bio.id_for_label }}">Breve biografia</label>
+                    {{ form.bio }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.foto.id_for_label }}">Foto (opcional)</label>
+                    {{ form.foto }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.email.id_for_label }}">E-mail de contato</label>
+                    {{ form.email }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.telefone.id_for_label }}">Telefone (opcional)</label>
+                    {{ form.telefone }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.linkedin.id_for_label }}">LinkedIn (opcional)</label>
+                    {{ form.linkedin }}
+                </div>
+
+                <button type="submit" class="login-btn-primary" style="margin-top: 1rem;">
+                    Enviar cadastro <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+
+        </div>
+    </main>
+
+    <footer id="contato">
+        <div class="footer-container">
+            <div class="footer-logo"><img src="{% static 'imagens/inova_vertical.png' %}" alt="Logo Inova Sudoeste de Minas"></div>
+            <div class="contact-info">
+                <h3>Entre em Contato</h3>
+                <div class="contact-item"><i class="fas fa-envelope"></i><span>inovasudoestedeminas@gmail.com</span></div>
+                <div class="contact-item"><i class="fab fa-instagram"></i><a href="https://www.instagram.com/inovasudoestedeminas/" style="color: white;">@inovasudoestedeminas</a></div>
+                <div class="contact-item"><i class="fa fa-link" aria-hidden="true"></i><a href="https://linktr.ee/InovaSudoestedeMinas" style="color: white;">Saiba mais</a></div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

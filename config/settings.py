@@ -1,5 +1,8 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -12,7 +15,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "django.contrib.messages",
+    "django.contrib.messages",  
     "django.contrib.staticfiles",
     "app",
 ]
@@ -54,7 +57,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "Inova",
         "USER": "postgres",
-        "PASSWORD": "123456",
+        "PASSWORD": "In0va#Sudoeste2026!",
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -86,4 +89,20 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "app/static/"),
 ]
 
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+LOGIN_URL = "login"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# ---------------------------------------------------------------------
+# Configuração de e-mail (envio de link de redefinição de senha)
+# ---------------------------------------------------------------------
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = f"INova Sudoeste de Minas <{EMAIL_HOST_USER}>"
