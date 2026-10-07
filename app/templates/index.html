@@ -1,4 +1,5 @@
 {% load static %}
+{% load startups_extras %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -188,7 +189,7 @@
         </section>
 
         <section id="startups" class="section white-section">
-            <div class="container">
+            <div class="container startups-container">
                <div class="section-content">
     <div class="startups-title-wrap">
         <span class="startups-dash"></span>
@@ -215,7 +216,7 @@
                     </div>
 
                     <div class="startups-grid-v2" id="startups-grid">
-                        {% for startup in startups %}
+                        {% for startup in startups|slice:":4" %}
                             <div class="startup-card-v2 startup-card" data-nome="{{ startup.nome|lower }}" data-cidade="{{ startup.municipio.nome }}">
                                 <div class="startup-icon-circle">
     {% if startup.logo %}
@@ -225,16 +226,15 @@
     {% endif %}
 </div>
                                 {% if startup.setor_atuacao %}
-                                    <span class="startup-badge">{{ startup.setor_atuacao|upper }}</span>
+                                    <span class="startup-badge"><i class="{{ startup.setor_atuacao|setor_icone }}"></i> {{ startup.setor_atuacao|upper }}</span>
                                 {% endif %}
                                 <h3>{{ startup.nome }}</h3>
                                 {% if startup.descricao %}
-                                    <p class="startup-desc">{{ startup.descricao|truncatewords:22 }}</p>
+                                    <p class="startup-desc">{{ startup.descricao|truncatewords:16 }}</p>
                                 {% endif %}
                                 <div class="startup-footer">
                                     <span><i class="fas fa-map-marker-alt"></i>{{ startup.municipio }}</span>
-                                    <span class="startup-sep">|</span>
-                                    <span><i class="fas fa-briefcase"></i>Estágio: {{ startup.get_estagio_display }}</span>
+                                    <span><i class="{{ startup.estagio|estagio_icone }}"></i> Estágio: {{ startup.get_estagio_display }}</span>
                                 </div>
                                 {% if startup.site %}
                                     <a href="{{ startup.site }}" target="_blank" rel="noopener noreferrer" class="startup-visit-btn">Visitar site <i class="fas fa-external-link-alt"></i></a>
@@ -264,8 +264,7 @@
 <h1>Indicadores do Ecossistema</h1>
                     <p class="section-intro">Acompanhe os principais números e indicadores do ecossistema de inovação do sudoeste de Minas Gerais.</p>
                     <div class="map-container">
-                        <!-- TODO: substituir o src abaixo pelo link de "Publicar na Web" gerado no Power BI Service -->
-                        <iframe title="Dashboard INova - Power BI" src="COLE_AQUI_O_LINK_DE_EMBED_DO_POWER_BI" width="100%" height="600" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        {% include "_dashboard.html" %}
                         <p class="map-caption">Dashboard de Indicadores - INova Sudoeste de Minas</p>
                     </div>
                 </div>

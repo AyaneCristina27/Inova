@@ -1,4 +1,5 @@
 {% load static %}
+{% load startups_extras %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -34,7 +35,7 @@
     </header>
 
     <main class="resource-page">
-        <div class="container">
+        <div class="container startups-container">
             <div class="startups-title-wrap">
                 <span class="startups-dash"></span>
                 <span class="startups-icon-top"><i class="fas fa-rocket"></i></span>
@@ -70,16 +71,15 @@
     {% endif %}
 </div>
                         {% if startup.setor_atuacao %}
-                            <span class="startup-badge">{{ startup.setor_atuacao|upper }}</span>
+                            <span class="startup-badge"><i class="{{ startup.setor_atuacao|setor_icone }}"></i> {{ startup.setor_atuacao|upper }}</span>
                         {% endif %}
                         <h3>{{ startup.nome }}</h3>
                         {% if startup.descricao %}
-                            <p class="startup-desc">{{ startup.descricao|truncatewords:22 }}</p>
+                            <p class="startup-desc">{{ startup.descricao|truncatewords:16 }}</p>
                         {% endif %}
                         <div class="startup-footer">
                             <span><i class="fas fa-map-marker-alt"></i>{{ startup.municipio }}</span>
-                            <span class="startup-sep">|</span>
-                            <span><i class="fas fa-briefcase"></i>Estágio: {{ startup.get_estagio_display }}</span>
+                            <span><i class="{{ startup.estagio|estagio_icone }}"></i> Estágio: {{ startup.get_estagio_display }}</span>
                         </div>
                         {% if startup.site %}
                             <a href="{{ startup.site }}" target="_blank" rel="noopener noreferrer" class="startup-visit-btn">Visitar site <i class="fas fa-external-link-alt"></i></a>

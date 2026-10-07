@@ -7,8 +7,21 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
-DEBUG = True
-ALLOWED_HOSTS = []
+
+# ---------------------------------------------------------------------
+# Modo de desenvolvimento x produção
+# No seu computador, o .env tem DEBUG=True.
+# Na Vercel, a variável DEBUG não é cadastrada, então fica desligado.
+# ---------------------------------------------------------------------
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".vercel.app"]
+CSRF_TRUSTED_ORIGINS = ["https://*.vercel.app"]
+
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -18,6 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "app",
+    "django_plotly_dash.apps.DjangoPlotlyDashConfig",
 ]
 
 MIDDLEWARE = [
@@ -28,7 +42,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_plotly_dash.middleware.BaseMiddleware",
 ]
+
+# Necessário para o django-plotly-dash (dashboard em Dash)
+X_FRAME_OPTIONS = "SAMEORIGIN"
 
 ROOT_URLCONF = "config.urls"
 
@@ -52,6 +70,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# ---------------------------------------------------------------------
+# Banco de dados
+# Na Vercel, o Supabase é acessado pelo Transaction pooler (porta 6543),
+# que exige DISABLE_SERVER_SIDE_CURSORS. Isso é ativado automaticamente.
+# ---------------------------------------------------------------------
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -61,6 +84,8 @@ DATABASES = {
         "HOST": os.environ.get("DB_HOST"),
         "PORT": os.environ.get("DB_PORT"),
         "OPTIONS": {"sslmode": os.environ.get("DB_SSLMODE", "prefer")},
+        "DISABLE_SERVER_SIDE_CURSORS": os.environ.get("DB_PORT") == "6543",
+        "CONN_MAX_AGE": 0,
     }
 }
 
@@ -84,6 +109,10 @@ TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
 USE_TZ = True
 
+# ---------------------------------------------------------------------
+# Arquivos estáticos (CSS, JavaScript, imagens do layout)
+# Na Vercel, o collectstatic roda sozinho e os arquivos são servidos pela CDN.
+# ---------------------------------------------------------------------
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [
@@ -95,8 +124,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # ---------------------------------------------------------------------
 # Armazenamento das imagens (uploads) no Supabase Storage
-# Com USE_SUPABASE_STORAGE=True no .env, os uploads vão para o bucket
-# do Supabase. Com False (ou sem a variável), usa a pasta media local.
+# Com USE_SUPABASE_STORAGE=True, os uploads vão para o bucket do Supabase.
+# Com False (ou sem a variável), usa a pasta media local.
 # ---------------------------------------------------------------------
 if os.environ.get("USE_SUPABASE_STORAGE") == "True":
     SUPABASE_PROJECT_REF = os.environ.get("SUPABASE_PROJECT_REF")

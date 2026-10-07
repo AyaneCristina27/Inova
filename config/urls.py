@@ -1,12 +1,17 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from app.views import *
 from django.contrib.auth import views as auth_views
 
+import app.dash_app  # noqa: F401  (registra o dashboard Dash)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # Dashboard em Dash (usado pelo {% plotly_direct %} no template)
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),
 
     # Site público
     path('', IndexView.as_view(), name='index'),
